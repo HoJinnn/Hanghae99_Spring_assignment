@@ -1,65 +1,77 @@
+package springAssignment;
+
 import java.util.Scanner;
 import java.util.UUID;
 
 public class Bus {
-    int maxPassengers = 30;
-    int nowPassengers = 0;
-    int getPassengers;
-    int fee = 1500;
-    int getFee = 0;
-    int fuel;
+    UUID busNum;
+    int fuelValue;
     int speed;
-    boolean state;
-    String busNum;
+    int fee;
+    int getFee;
+    int maxPassengers;
+    int getPassengers;
+    boolean isDrive;
 
     Bus() {
-        this.busNum = UUID.randomUUID().toString();
-        System.out.println(busNum);
-    }
-
-    public void run(int fuel) {
-        this.fuel = fuel;
-        changeState();
+        this.busNum = UUID.randomUUID();
+        this.fuelValue = 100;
+        this.speed = 0;
+        this.fee = 1000;
+        this.maxPassengers = 30;
+        this.getPassengers = 0;
+        this.getFee = 0;
+        isDrive = false;
     }
 
     public void changeState() {
-        this.state = true;
-        System.out.println("운행!");
-
-        if(fuel < 10){
-            System.out.println("주유가 필요합니다.");
+        if(fuelValue < 10){
+            isDrive = !isDrive;
             System.out.println("차고지행!");
-            state = false;
+        }else if(!isDrive){
+            isDrive = true;
+            System.out.println("운행 시작!");
+        }else if(isDrive){
+            isDrive = false;
+            System.out.println("운행 종료!");
         }
     }
 
-    public void takePassengers(int getPassengers) {
-        if(!state) return;
-        this.getPassengers = getPassengers;
-        if ((this.getPassengers + nowPassengers) > maxPassengers) {
-            while ((this.getPassengers + nowPassengers) <= maxPassengers) {
-                this.getPassengers -= 1;
-            }
-            System.out.println("승객 초과! 다음 버스를 이용해주세요!");
-            nowPassengers += this.getPassengers;
-            getFee += this.getPassengers * fee;
-            System.out.println("현재 승객: " + nowPassengers + " 받은 요금: " + getFee);
-        } else {
-            nowPassengers += getPassengers;
-            getFee += getPassengers * fee;
-            System.out.println("현재 승객: " + nowPassengers + " 받은 요금: " + getFee);
-        }
+    public void getDrive() {
+        changeState();
+        System.out.println("버스 번호: " + busNum);
     }
 
-    public void changeSpeed(int speed) {
-        if(!state) return;
-        this.speed = speed;
-        if (fuel < 10)
-            System.out.println("주유가 필요합니다.");
-
-        System.out.println("현재 속도: " + speed + "km");
+    public void changeSpeed() {
+        if(!isDrive){
+            System.out.println("현재 운행 중이 아닙니다.");
+            return;
+        }
+        System.out.println("현재 속도: " + speed);
         Scanner sc = new Scanner(System.in);
         speed += sc.nextInt();
-        System.out.println("현재 속도: " + speed + "km");
+        System.out.println("현재 속도: " + speed);
     }
+
+    public void getPassengers(int num) {
+        if(!isDrive){
+            System.out.println("현재 운행 중이 아닙니다.");
+            return;
+        }
+
+        System.out.println("현재 승객: " + getPassengers + "  " +"추가 승객: " + num);
+        if((getPassengers + num) > maxPassengers){
+            getPassengers = maxPassengers;
+            getFee = fee * num;
+            System.out.println("다음 버스를 이용해주세요.");
+            System.out.println(("받은 요금: " + getFee));
+            System.out.println("현재 승객: " + getPassengers);
+        }else{
+            getPassengers += num;
+            getFee = fee * num;
+            System.out.println("현재 승객: " + getPassengers);
+            System.out.println("받은 요금: " + getFee);
+        }
+    }
+    
 }
